@@ -1,16 +1,51 @@
-import React, { Component } from "react";
+import React, { useEffect, useReducer } from "react";
 import "./App.css";
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <h1>SMURFS! 2.0 W/ Redux</h1>
-        <div>Welcome to your state management version of Smurfs!</div>
-        <div>Start inside of your `src/index.js` file!</div>
-        <div>Have fun!</div>
-      </div>
-    );
+import { connect } from 'react-redux';
+import axios from 'axios';
+
+import { reducer, initialState } from '../reducers';
+
+import { getSmurfs, addSmurf } from '../actions';
+
+const App = () => {
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const initSmurfs = (smurfList) => {
+    dispatch({ type: 'INIT_SMURFS', payload: smurfList })
+  };
+
+  // const addSmurf = { type: 'ADD_SMURF' };
+  
+  useEffect(() => {
+    axios
+      .get('http://localhost:3333/smurfs')
+      .then(res => {
+        console.log(res.data)
+        initSmurfs(res.data)
+      })
+      .catch(err => console.log(err))
+  }, [])
+
+  return (
+    <div className="App">
+      {state.allSmurfs.map(smurf => {
+        return(
+          <div>
+            <h2>{smurf.name}</h2>
+            <h5><strong>age: </strong>{smurf.age}</h5>
+            <p>Height: {smurf.height}</p>
+          </div>
+        )
+      })}
+    </div>
+  );
+}
+
+const mapStateToProps = state => {
+  return {
+    allSmurfs: state.allSmurfs
   }
 }
 
-export default App;
+export default connect(mapStateToProps, {})(App);
