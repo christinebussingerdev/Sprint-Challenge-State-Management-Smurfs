@@ -6,9 +6,9 @@ export const initialState = {
 
 export const reducer = (state = initialState, action) => {
   switch(action.type) {
-    case 'INIT_SMURFS': 
+    case 'GET_SMURF': 
       console.log(action.payload)
-      return({...state, allSmurfs: [action.payload]})
+      return({allSmurfs: action.payload})
     case 'ADD_SMURF':
       return(state)
     default:
